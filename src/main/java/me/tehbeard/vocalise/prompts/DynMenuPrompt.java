@@ -1,16 +1,17 @@
 package me.tehbeard.vocalise.prompts;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.conversations.ValidatingPrompt;
 
 /**
  * Implements a text menu prompt for bukkit's conversation API
- * This differs from the menu prompt as it gets the menu at the time it is called
+ * This differs from the menu prompt as it gets the menu at the 
+ * time it is called. While this can be done by overriding
+ * ValidatingPrompt, DynMenuPrompt fills in the boilerplate code 
+ * for listing the menu 
  * 
  * @author James
  *
@@ -19,23 +20,30 @@ public class DynMenuPrompt extends ValidatingPrompt{
 
 	protected String text;
 	protected MenuPromptFeeder feeder;
+
+
 	/**
-	 * Provide flavour text for the menu
-	 * @param text
+	 * Creates a new DynMenuPrompt
+	 * @param feeder The object that will feed menu options
 	 */
 	public DynMenuPrompt(MenuPromptFeeder feeder){
 		this(feeder,"Select an option");
 	}
+	/**
+	 * Creates a new DynMenuPrompt
+     * @param feeder The object that will feed menu options
+	 * @param text text prompt to use
+	 */
 	public DynMenuPrompt(MenuPromptFeeder feeder,String text) {
 		this.text = text;
 		this.feeder=  feeder;
 	}
 
 	
-	public String getPromptText(ConversationContext context) {
+	public final String getPromptText(ConversationContext context) {
 		String msg = "";
 		int i =0;
-		for(String opt : feeder.getMenuOptions()){
+		for(String opt : feeder.getMenuOptions(context)){
 			if(msg.length() !=0){msg += ",";}
 			msg += opt;
 			i++;
@@ -45,8 +53,8 @@ public class DynMenuPrompt extends ValidatingPrompt{
 	}
 
 	@Override
-	protected boolean isInputValid(ConversationContext context, String input) {
-		for(String opt : feeder.getMenuOptions()){
+	protected final boolean isInputValid(ConversationContext context, String input) {
+		for(String opt : feeder.getMenuOptions(context)){
 			if(opt.equalsIgnoreCase(input)){
 				return true;
 			}

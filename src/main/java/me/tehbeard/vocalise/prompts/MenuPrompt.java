@@ -5,11 +5,12 @@ import java.util.Map;
 
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.conversations.ValidatingPrompt;
 
 /**
  * Implements a text menu prompt for bukkit's conversation API
+ * Menu options are added by the addMenuOption(String, Prompt) method
+ * These menu's are static, and cannot change
  * @author James
  *
  */
