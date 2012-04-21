@@ -7,9 +7,15 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import me.tehbeard.vocalise.prompts.MenuPrompt;
 import me.tehbeard.vocalise.prompts.MsgPrompt;
 import me.tehbeard.vocalise.prompts.QuickBooleanPrompt;
+import me.tehbeard.vocalise.prompts.input.InputBooleanPrompt;
+import me.tehbeard.vocalise.prompts.input.InputNumberPrompt;
+import me.tehbeard.vocalise.prompts.input.InputPlayerNamePrompt;
+import me.tehbeard.vocalise.prompts.input.InputRegexPrompt;
+import me.tehbeard.vocalise.prompts.input.InputStringPrompt;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -26,7 +32,7 @@ public class PromptBuilder {
 
     private Map<String,Prompt> promptDatabase = new HashMap<String, Prompt>();
     private Prompt startPrompt;
-    
+
     public PromptBuilder(File file,Map<String,Prompt> initialPrompts){
         this(file);
         promptDatabase.putAll(initialPrompts);
@@ -122,7 +128,50 @@ public class PromptBuilder {
             prompt = mp;
         }
 
-          
+        ////////////////////////
+        // input prompts      //
+        ////////////////////////
+        
+        if(type.equalsIgnoreCase("inpstr")){
+            InputStringPrompt isp = new InputStringPrompt(message,config.getString("variable"));
+            makePromptRef(id,isp);
+            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
+            prompt = isp;
+
+        }
+        
+        if(type.equalsIgnoreCase("inpnum")){
+            InputNumberPrompt isp = new InputNumberPrompt(message,config.getString("variable"));
+            makePromptRef(id,isp);
+            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
+            prompt = isp;
+
+        }
+        
+        if(type.equalsIgnoreCase("inpbool")){
+            InputBooleanPrompt isp = new InputBooleanPrompt(message,config.getString("variable"));
+            makePromptRef(id,isp);
+            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
+            prompt = isp;
+
+        }
+        
+        if(type.equalsIgnoreCase("inpply")){
+            InputPlayerNamePrompt isp = new InputPlayerNamePrompt(message,config.getString("variable"));
+            makePromptRef(id,isp);
+            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
+            prompt = isp;
+
+        }
+        
+        if(type.equalsIgnoreCase("inpregex")){
+            InputRegexPrompt isp = new InputRegexPrompt(message,config.getString("variable"),config.getString("regex"));
+            makePromptRef(id,isp);
+            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
+            prompt = isp;
+
+        }
+        
         return prompt;
 
 

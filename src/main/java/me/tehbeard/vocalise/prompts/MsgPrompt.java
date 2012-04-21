@@ -10,6 +10,7 @@ import org.bukkit.conversations.Prompt;
  * @author James
  *
  */
+
 public class MsgPrompt extends MessagePrompt{
 
     String msg;

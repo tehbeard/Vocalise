@@ -53,3 +53,24 @@ Displays a Menu for the user to select from
         name:"menuOption2"
         prompt:nested definition of prompt, or "*id"
       .....
+
+## Input Prompts
+
+Input prompts allow you to get data from a user and store it in the session data, these can be accessed 
+
+###Input String/number/boolean/player name Prompt
+####Code Sample
+    type: "inpstr/inpnum/inpbool/inpply"
+    id: "optionalId"
+    text: "prompt for text"
+    variable: "storeHere"
+    next: nested definition of next prompt, or "*id"
+    
+###Input Regex Prompt
+####Code Sample
+    type: "inpregex"
+    id: "optionalId"
+    text: "prompt for text"
+    regex: "regex to check against"
+    variable: "storeHere"
+    next: nested definition of next prompt, or "*id"
