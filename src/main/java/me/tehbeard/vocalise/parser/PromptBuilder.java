@@ -1,5 +1,9 @@
 package me.tehbeard.vocalise.parser;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,14 +12,61 @@ import me.tehbeard.vocalise.prompts.MsgPrompt;
 import me.tehbeard.vocalise.prompts.QuickBooleanPrompt;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import org.bukkit.conversations.Prompt;
 
+/**
+ * Construct a prompt graph from a supplied file/inputstream
+ * @author James
+ *
+ */
 public class PromptBuilder {
 
     private Map<String,Prompt> promptDatabase = new HashMap<String, Prompt>();
+    private Prompt startPrompt;
+    
+    
+    public PromptBuilder(File file){
+        YamlConfiguration c = new YamlConfiguration();
+        try {
+            c.load(file);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
+        startPrompt = generatePrompt(c);
+    }
+
+    public PromptBuilder(InputStream is){
+        YamlConfiguration c = new YamlConfiguration();
+        try {
+            c.load(is);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        startPrompt = generatePrompt(c);
+    }
+
+    
     private Prompt generatePrompt(ConfigurationSection config){
+        promptDatabase.put("NULL", null);
         Prompt prompt = null;
 
         String id = config.getString("id","");
@@ -24,15 +75,11 @@ public class PromptBuilder {
 
         //check for pointers
 
-
-
-
-
         if(type.equalsIgnoreCase("msg")){
             prompt = new MsgPrompt(message, config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
         }
 
-        if(type.equalsIgnoreCase("boolean")){
+        if(type.equalsIgnoreCase("bool")){
             if(!config.contains("true") || !config.contains("false") ){
                 throw new VocaliseParserException("Boolean prompt must have a true and a false declared");
             }
@@ -47,11 +94,11 @@ public class PromptBuilder {
             for(String s : config.getConfigurationSection("options").getKeys(false)){
                 mp.addMenuOption(
                         config.getConfigurationSection("options." + s).getString("name"),
-                        
+
                         config.getConfigurationSection("options." + s).isString("prompt") ? 
                                 locatePromptById(config.getString("options." + s + ".prompt")) : 
                                     generatePrompt(config.getConfigurationSection("options." + s + ".prompt"))
-                        
+
                         );
             }
         }
@@ -75,5 +122,18 @@ public class PromptBuilder {
             throw new VocaliseParserException("Could not find node referenced by ID [" + id + "]");
         }
 
+    }
+
+    public Prompt getPromptById(String id){
+        try{
+            return locatePromptById(id);
+        }
+        catch(VocaliseParserException e){
+            return null;
+        }
+    }
+
+    public Prompt getStartPrompt(){
+        return startPrompt;
     }
 }
