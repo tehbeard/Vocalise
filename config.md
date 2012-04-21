@@ -34,8 +34,8 @@ Displays a boolean prompt to the user then moves to a specific prompt based on i
     type:bool
     id:optionalId
     text:"Do you wish to continue?"
-    true: nested definition of prompt to goto if true, or "*id"
-    false: nested definition of prompt to goto if false, or "*id"
+    t: nested definition of prompt to goto if true, or "*id"
+    f: nested definition of prompt to goto if false, or "*id"
 
 ###Menu prompt
 
