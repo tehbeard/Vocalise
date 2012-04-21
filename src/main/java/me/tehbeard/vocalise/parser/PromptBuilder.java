@@ -27,6 +27,15 @@ public class PromptBuilder {
     private Map<String,Prompt> promptDatabase = new HashMap<String, Prompt>();
     private Prompt startPrompt;
     
+    public PromptBuilder(File file,Map<String,Prompt> initialPrompts){
+        this(file);
+        promptDatabase.putAll(initialPrompts);
+    }
+    
+    public PromptBuilder(InputStream is,Map<String,Prompt> initialPrompts){
+        this(is);
+        promptDatabase.putAll(initialPrompts);
+    }
     
     public PromptBuilder(File file){
         YamlConfiguration c = new YamlConfiguration();
@@ -72,26 +81,35 @@ public class PromptBuilder {
         String id = config.getString("id","");
         String type = config.getString("type");
         String message = config.getString("text");
-
+        System.out.println(" prompt of type " + type + ", with msg " + message);
         //check for pointers
 
         if(type.equalsIgnoreCase("msg")){
-            prompt = new MsgPrompt(message, config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
+            MsgPrompt mp = new MsgPrompt(message,null);
+            makePromptRef(id,mp);
+            mp.setNextPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
+            prompt = mp;
+
         }
 
         if(type.equalsIgnoreCase("bool")){
-            if(!config.contains("true") || !config.contains("false") ){
+            if(!config.contains("t") || !config.contains("f") ){
                 throw new VocaliseParserException("Boolean prompt must have a true and a false declared");
             }
-            prompt = new QuickBooleanPrompt(message, config.isString("true") ? locatePromptById(config.getString("true")) : generatePrompt(config.getConfigurationSection("true")), config.isString("false") ? locatePromptById(config.getString("false")) : generatePrompt(config.getConfigurationSection("false")));
+            QuickBooleanPrompt qbp = new QuickBooleanPrompt(message,null,null);
+            makePromptRef(id,qbp);
+            qbp.setPrompts(config.isString("t") ? locatePromptById(config.getString("t")) : generatePrompt(config.getConfigurationSection("t")), config.isString("f") ? locatePromptById(config.getString("f")) : generatePrompt(config.getConfigurationSection("f")));
+            prompt = qbp;
         }
 
         if(type.equalsIgnoreCase("menu")){
             MenuPrompt mp = new MenuPrompt();
+            makePromptRef(id,mp);
             if(!config.contains("options")){
                 throw new VocaliseParserException("Menu prompts need an options key for menu items");
             }
             for(String s : config.getConfigurationSection("options").getKeys(false)){
+                System.out.println("Parsing option " + s);
                 mp.addMenuOption(
                         config.getConfigurationSection("options." + s).getString("name"),
 
@@ -101,13 +119,10 @@ public class PromptBuilder {
 
                         );
             }
+            prompt = mp;
         }
 
-        if(!id.equalsIgnoreCase("") && prompt != null){
-            if(!promptDatabase.containsKey(id)){
-                promptDatabase.put(id,prompt);
-            }
-        }
+          
         return prompt;
 
 
@@ -122,6 +137,14 @@ public class PromptBuilder {
             throw new VocaliseParserException("Could not find node referenced by ID [" + id + "]");
         }
 
+    }
+    
+    private void makePromptRef(String id,Prompt prompt){
+        if(!id.equalsIgnoreCase("") && prompt != null){
+            if(!promptDatabase.containsKey(id)){
+                promptDatabase.put(id,prompt);
+            }
+        }
     }
 
     public Prompt getPromptById(String id){

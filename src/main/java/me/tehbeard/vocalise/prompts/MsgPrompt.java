@@ -21,6 +21,10 @@ public class MsgPrompt extends MessagePrompt{
     public String getPromptText(ConversationContext context) {
         return colorise(msg);
     }
+    
+    public void setNextPrompt(Prompt p){
+        prompt = p;
+    }
 
     @Override
     protected Prompt getNextPrompt(ConversationContext context) {

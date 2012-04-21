@@ -31,6 +31,10 @@ public class QuickBooleanPrompt extends BooleanPrompt {
 		this.f = f;
 	}
 
+	public void setPrompts(Prompt t,Prompt f){
+	    this.t = t;
+        this.f = f;
+	}
 	public final String getPromptText(ConversationContext context) {
 		// TODO Auto-generated method stub
 		return txt;

@@ -48,6 +48,9 @@ public class MenuPrompt extends ValidatingPrompt{
 			i++;
 			if(i==5){context.getForWhom().sendRawMessage(msg);msg="";i=0;}
 		}
+		if(msg.length() > 0){
+		    context.getForWhom().sendRawMessage(msg);
+		}
 		return text;
 	}
 
