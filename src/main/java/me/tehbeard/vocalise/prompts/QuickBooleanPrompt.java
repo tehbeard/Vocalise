@@ -10,7 +10,7 @@ import org.bukkit.conversations.Prompt;
  * @author James
  *
  */
-public class BetterBooleanPrompt extends BooleanPrompt {
+public class QuickBooleanPrompt extends BooleanPrompt {
 
 	protected String txt;
 	protected Prompt t;
@@ -24,7 +24,7 @@ public class BetterBooleanPrompt extends BooleanPrompt {
 	 * @param t prompt to goto if true
 	 * @param f prompt to goto if false
 	 */
-	protected BetterBooleanPrompt(String text, Prompt t, Prompt f) {
+	public QuickBooleanPrompt(String text, Prompt t, Prompt f) {
 		super();
 		this.txt = text;
 		this.t = t;

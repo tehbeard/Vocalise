@@ -16,7 +16,7 @@ import org.bukkit.conversations.ValidatingPrompt;
  * @author James
  *
  */
-public class DynMenuPrompt extends ValidatingPrompt{
+public class DynamicMenuPrompt extends ValidatingPrompt{
 
 	protected String text;
 	protected MenuPromptFeeder feeder;
@@ -26,7 +26,7 @@ public class DynMenuPrompt extends ValidatingPrompt{
 	 * Creates a new DynMenuPrompt
 	 * @param feeder The object that will feed menu options
 	 */
-	public DynMenuPrompt(MenuPromptFeeder feeder){
+	public DynamicMenuPrompt(MenuPromptFeeder feeder){
 		this(feeder,"Select an option");
 	}
 	/**
@@ -34,7 +34,7 @@ public class DynMenuPrompt extends ValidatingPrompt{
      * @param feeder The object that will feed menu options
 	 * @param text text prompt to use
 	 */
-	public DynMenuPrompt(MenuPromptFeeder feeder,String text) {
+	public DynamicMenuPrompt(MenuPromptFeeder feeder,String text) {
 		this.text = text;
 		this.feeder=  feeder;
 	}
