@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import me.tehbeard.vocalise.prompts.MenuPrompt;
 import me.tehbeard.vocalise.prompts.MsgPrompt;
 import me.tehbeard.vocalise.prompts.QuickBooleanPrompt;
@@ -33,17 +32,29 @@ public class PromptBuilder {
     private Map<String,Prompt> promptDatabase = new HashMap<String, Prompt>();
     private Prompt startPrompt;
 
-    public PromptBuilder(File file,Map<String,Prompt> initialPrompts){
-        this(file);
-        promptDatabase.putAll(initialPrompts);
+    public PromptBuilder(){
+        
     }
     
-    public PromptBuilder(InputStream is,Map<String,Prompt> initialPrompts){
-        this(is);
-        promptDatabase.putAll(initialPrompts);
+    public PromptBuilder (File file,Map<String,Prompt> prompts){
+        promptDatabase.putAll(prompts);
+        load(file);
     }
     
-    public PromptBuilder(File file){
+    public PromptBuilder (InputStream is,Map<String,Prompt> prompts){
+        promptDatabase.putAll(prompts);
+        load(is);
+    }
+    
+    public PromptBuilder (File file){
+        load(file);
+    }
+    
+    public PromptBuilder (InputStream is){
+        load(is);
+    }
+    
+    public void load(File file){
         YamlConfiguration c = new YamlConfiguration();
         try {
             c.load(file);
@@ -61,7 +72,7 @@ public class PromptBuilder {
         startPrompt = generatePrompt(c);
     }
 
-    public PromptBuilder(InputStream is){
+    public void load(InputStream is){
         YamlConfiguration c = new YamlConfiguration();
         try {
             c.load(is);
@@ -188,7 +199,7 @@ public class PromptBuilder {
 
     }
     
-    private void makePromptRef(String id,Prompt prompt){
+    public void makePromptRef(String id,Prompt prompt){
         if(!id.equalsIgnoreCase("") && prompt != null){
             if(!promptDatabase.containsKey(id)){
                 promptDatabase.put(id,prompt);
