@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import me.tehbeard.utils.factory.ConfigurableFactory;
 import me.tehbeard.vocalise.prompts.MenuPrompt;
 import me.tehbeard.vocalise.prompts.MsgPrompt;
 import me.tehbeard.vocalise.prompts.QuickBooleanPrompt;
@@ -31,26 +32,40 @@ public class PromptBuilder {
 
     private Map<String,Prompt> promptDatabase = new HashMap<String, Prompt>();
     private Prompt startPrompt;
+    
+    private final ConfigurableFactory<ConfigurablePrompt, PromptTag> promptFactory;
 
     public PromptBuilder(){
+        promptFactory = new ConfigurableFactory<ConfigurablePrompt, PromptTag>(PromptTag.class) {
+            
+            @Override
+            public String getTag(PromptTag annotation) {
+                return annotation.tag();
+            }
+        };
+        
         
     }
     
     public PromptBuilder (File file,Map<String,Prompt> prompts){
+        this();
         promptDatabase.putAll(prompts);
         load(file);
     }
     
     public PromptBuilder (InputStream is,Map<String,Prompt> prompts){
+        this();
         promptDatabase.putAll(prompts);
         load(is);
     }
     
     public PromptBuilder (File file){
+        this();
         load(file);
     }
     
     public PromptBuilder (InputStream is){
+        this();
         load(is);
     }
     
