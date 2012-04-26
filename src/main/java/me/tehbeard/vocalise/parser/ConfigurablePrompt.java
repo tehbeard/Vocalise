@@ -1,8 +1,9 @@
 package me.tehbeard.vocalise.parser;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.conversations.Prompt;
 
-public interface ConfigurablePrompt {
+public interface ConfigurablePrompt extends Prompt{
 
     
     /**
@@ -10,6 +11,6 @@ public interface ConfigurablePrompt {
      * @param section configuration section to work from
      * @param builder
      */
-    public void configure(ConfigurationSection section,PromptBuilder builder);
+    public void configure(ConfigurationSection config,PromptBuilder builder);
     
 }

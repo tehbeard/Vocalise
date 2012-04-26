@@ -1,6 +1,11 @@
 package me.tehbeard.vocalise.prompts;
 
+import me.tehbeard.vocalise.parser.ConfigurablePrompt;
+import me.tehbeard.vocalise.parser.PromptBuilder;
+import me.tehbeard.vocalise.parser.PromptTag;
+
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.MessagePrompt;
 import org.bukkit.conversations.Prompt;
@@ -10,11 +15,16 @@ import org.bukkit.conversations.Prompt;
  * @author James
  *
  */
-
-public class MsgPrompt extends MessagePrompt{
+@PromptTag(tag="msg")
+public class MsgPrompt extends MessagePrompt implements ConfigurablePrompt{
 
     String msg;
     Prompt prompt;
+    
+    public MsgPrompt(){
+        msg = "";
+        prompt = null;
+    }
     public MsgPrompt(String message,Prompt prompt){
         msg = message;
         this.prompt = prompt;
@@ -41,5 +51,11 @@ public class MsgPrompt extends MessagePrompt{
             str = str.replace("\\&\\"+i,ChatColor.getByChar(i).toString());
         }
         return str;
+    }
+    public void configure(ConfigurationSection section, PromptBuilder builder) {
+        
+        msg = section.getString("text");
+        builder.makePromptRef(section.getString("id"),this);
+        prompt = section.isString("next") ? builder.locatePromptById(section.getString("next")) : builder.generatePrompt(section.getConfigurationSection("next"));
     }
 }

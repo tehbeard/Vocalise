@@ -43,6 +43,9 @@ public class PromptBuilder {
                 return annotation.tag();
             }
         };
+        promptFactory.addProduct(MsgPrompt.class);
+        promptFactory.addProduct(QuickBooleanPrompt.class);
+        promptFactory.addProduct(MenuPrompt.class);
         
         
     }
@@ -106,7 +109,7 @@ public class PromptBuilder {
     }
 
     
-    private Prompt generatePrompt(ConfigurationSection config){
+    public Prompt generatePrompt(ConfigurationSection config){
         promptDatabase.put("NULL", null);
         Prompt prompt = null;
 
@@ -116,43 +119,14 @@ public class PromptBuilder {
         System.out.println(" prompt of type " + type + ", with msg " + message);
         //check for pointers
 
-        if(type.equalsIgnoreCase("msg")){
-            MsgPrompt mp = new MsgPrompt(message,null);
-            makePromptRef(id,mp);
-            mp.setNextPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
-            prompt = mp;
-
+        
+        ConfigurablePrompt p = promptFactory.getProduct(type);
+        if(p!=null){
+            System.out.println("Prompt is being configured");
+            p.configure(config,this);
+            prompt = p;
         }
 
-        if(type.equalsIgnoreCase("bool")){
-            if(!config.contains("t") || !config.contains("f") ){
-                throw new VocaliseParserException("Boolean prompt must have a true and a false declared");
-            }
-            QuickBooleanPrompt qbp = new QuickBooleanPrompt(message,null,null);
-            makePromptRef(id,qbp);
-            qbp.setPrompts(config.isString("t") ? locatePromptById(config.getString("t")) : generatePrompt(config.getConfigurationSection("t")), config.isString("f") ? locatePromptById(config.getString("f")) : generatePrompt(config.getConfigurationSection("f")));
-            prompt = qbp;
-        }
-
-        if(type.equalsIgnoreCase("menu")){
-            MenuPrompt mp = new MenuPrompt();
-            makePromptRef(id,mp);
-            if(!config.contains("options")){
-                throw new VocaliseParserException("Menu prompts need an options key for menu items");
-            }
-            for(String s : config.getConfigurationSection("options").getKeys(false)){
-                System.out.println("Parsing option " + s);
-                mp.addMenuOption(
-                        config.getConfigurationSection("options." + s).getString("name"),
-
-                        config.getConfigurationSection("options." + s).isString("prompt") ? 
-                                locatePromptById(config.getString("options." + s + ".prompt")) : 
-                                    generatePrompt(config.getConfigurationSection("options." + s + ".prompt"))
-
-                        );
-            }
-            prompt = mp;
-        }
 
         ////////////////////////
         // input prompts      //
@@ -197,13 +171,12 @@ public class PromptBuilder {
             prompt = isp;
 
         }
-        
         return prompt;
 
 
     }
 
-    private Prompt locatePromptById(String id){
+    public Prompt locatePromptById(String id){
         if(promptDatabase.containsKey(id)){
             return promptDatabase.get(id);
         }
@@ -215,7 +188,7 @@ public class PromptBuilder {
     }
     
     public void makePromptRef(String id,Prompt prompt){
-        if(!id.equalsIgnoreCase("") && prompt != null){
+        if(id != null && !id.equalsIgnoreCase("") && prompt != null){
             if(!promptDatabase.containsKey(id)){
                 promptDatabase.put(id,prompt);
             }
