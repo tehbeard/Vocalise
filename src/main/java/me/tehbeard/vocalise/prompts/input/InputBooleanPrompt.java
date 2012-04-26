@@ -1,15 +1,25 @@
 package me.tehbeard.vocalise.prompts.input;
 
+import me.tehbeard.vocalise.parser.ConfigurablePrompt;
+import me.tehbeard.vocalise.parser.PromptBuilder;
+import me.tehbeard.vocalise.parser.PromptTag;
+
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.conversations.BooleanPrompt;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 
-public class InputBooleanPrompt extends BooleanPrompt {
+@PromptTag(tag="inpbool")
+public class InputBooleanPrompt extends BooleanPrompt implements ConfigurablePrompt{
 
     private String input;
     private String session;
     
     private Prompt prompt;
+    
+    public InputBooleanPrompt(){
+        this("","");
+    }
     
     public InputBooleanPrompt(String input,String session){
         this.input = input;
@@ -29,6 +39,13 @@ public class InputBooleanPrompt extends BooleanPrompt {
             boolean input) {
         context.setSessionData(session,input);
         return prompt;
+    }
+
+    public void configure(ConfigurationSection config, PromptBuilder builder) {
+        session = config.getString("variable");
+        input = config.getString("text");
+        builder.makePromptRef(config.getString("id"),this);
+        setPrompt(config.isString("next") ? builder.locatePromptById(config.getString("next")) : builder.generatePrompt(config.getConfigurationSection("next")));
     }
 
 }

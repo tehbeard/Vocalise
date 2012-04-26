@@ -43,10 +43,18 @@ public class PromptBuilder {
                 return annotation.tag();
             }
         };
+        
+        //simple prompts
         promptFactory.addProduct(MsgPrompt.class);
         promptFactory.addProduct(QuickBooleanPrompt.class);
         promptFactory.addProduct(MenuPrompt.class);
         
+        //input prompts
+        promptFactory.addProduct(InputStringPrompt.class);
+        promptFactory.addProduct(InputNumberPrompt.class);
+        promptFactory.addProduct(InputBooleanPrompt.class);
+        promptFactory.addProduct(InputPlayerNamePrompt.class);
+        promptFactory.addProduct(InputRegexPrompt.class);
         
     }
     
@@ -116,7 +124,7 @@ public class PromptBuilder {
         String id = config.getString("id","");
         String type = config.getString("type");
         String message = config.getString("text");
-        System.out.println(" prompt of type " + type + ", with msg " + message);
+        System.out.println(" prompt of type " + type + ", id [" + id + "] with msg " + message);
         //check for pointers
 
         
@@ -125,51 +133,6 @@ public class PromptBuilder {
             System.out.println("Prompt is being configured");
             p.configure(config,this);
             prompt = p;
-        }
-
-
-        ////////////////////////
-        // input prompts      //
-        ////////////////////////
-        
-        if(type.equalsIgnoreCase("inpstr")){
-            InputStringPrompt isp = new InputStringPrompt(message,config.getString("variable"));
-            makePromptRef(id,isp);
-            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
-            prompt = isp;
-
-        }
-        
-        if(type.equalsIgnoreCase("inpnum")){
-            InputNumberPrompt isp = new InputNumberPrompt(message,config.getString("variable"));
-            makePromptRef(id,isp);
-            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
-            prompt = isp;
-
-        }
-        
-        if(type.equalsIgnoreCase("inpbool")){
-            InputBooleanPrompt isp = new InputBooleanPrompt(message,config.getString("variable"));
-            makePromptRef(id,isp);
-            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
-            prompt = isp;
-
-        }
-        
-        if(type.equalsIgnoreCase("inpply")){
-            InputPlayerNamePrompt isp = new InputPlayerNamePrompt(message,config.getString("variable"));
-            makePromptRef(id,isp);
-            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
-            prompt = isp;
-
-        }
-        
-        if(type.equalsIgnoreCase("inpregex")){
-            InputRegexPrompt isp = new InputRegexPrompt(message,config.getString("variable"),config.getString("regex"));
-            makePromptRef(id,isp);
-            isp.setPrompt(config.isString("next") ? locatePromptById(config.getString("next")) : generatePrompt(config.getConfigurationSection("next")));
-            prompt = isp;
-
         }
         return prompt;
 
@@ -206,5 +169,18 @@ public class PromptBuilder {
 
     public Prompt getStartPrompt(){
         return startPrompt;
+    }
+
+    /**
+     * Add some custom prompts to this prompt Builder
+     * @param prompts prompt types to add to the prompt builder
+     * @return itself, to allow chaining.
+     */
+    public PromptBuilder AddPrompts(Class<? extends ConfigurablePrompt> ...prompts){
+        for(Class<? extends ConfigurablePrompt> p : prompts){
+        promptFactory.addProduct(p);
+            
+        }
+        return this;
     }
 }
