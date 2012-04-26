@@ -16,8 +16,7 @@ in order to speed up coding of the static parts of a conversation graph.
 Vocalise also provides `PromptBuilder()`. PromptBuilder parses Yaml files (either in the file system or inside the jar
 using the `getResource(String)` function, creating a prompt graph.
 Currently PromptBuilder supports a number of internal Prompt types (see config.md). Custom prompts can be passed into 
-PromptBuilder, so they can be used by a script. Support for loading custom prompt types will hopefully appear in a
-future release.  
+PromptBuilder, so they can be used by a script. Support is provided as well to load your own Prompt classes.
 
 ##Project Goals
 
