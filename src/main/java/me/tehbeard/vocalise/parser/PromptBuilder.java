@@ -21,7 +21,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.Prompt;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Construct a prompt graph from a supplied file/inputstream
@@ -34,8 +37,10 @@ public class PromptBuilder {
     private Prompt startPrompt;
     
     private final ConfigurableFactory<ConfigurablePrompt, PromptTag> promptFactory;
+    private final Plugin plugin;
 
-    public PromptBuilder(){
+    public PromptBuilder(Plugin plugin){
+        this.plugin = plugin;
         promptFactory = new ConfigurableFactory<ConfigurablePrompt, PromptTag>(PromptTag.class) {
             
             @Override
@@ -58,25 +63,25 @@ public class PromptBuilder {
         
     }
     
-    public PromptBuilder (File file,Map<String,Prompt> prompts){
-        this();
+    public PromptBuilder (Plugin plugin,File file,Map<String,Prompt> prompts){
+        this(plugin);
         promptDatabase.putAll(prompts);
         load(file);
     }
     
-    public PromptBuilder (InputStream is,Map<String,Prompt> prompts){
-        this();
+    public PromptBuilder (Plugin plugin,InputStream is,Map<String,Prompt> prompts){
+        this(plugin);
         promptDatabase.putAll(prompts);
         load(is);
     }
     
-    public PromptBuilder (File file){
-        this();
+    public PromptBuilder (Plugin plugin,File file){
+        this(plugin);
         load(file);
     }
     
-    public PromptBuilder (InputStream is){
-        this();
+    public PromptBuilder (Plugin plugin,InputStream is){
+        this(plugin);
         load(is);
     }
     
@@ -167,9 +172,7 @@ public class PromptBuilder {
         }
     }
 
-    public Prompt getStartPrompt(){
-        return startPrompt;
-    }
+    
 
     /**
      * Add some custom prompts to this prompt Builder
@@ -183,4 +186,11 @@ public class PromptBuilder {
         }
         return this;
     }
+    
+    public Conversation makeConversation(Conversable whom){
+        Conversation con = new VocalisedConversation(plugin, whom, startPrompt);
+        con.begin();
+        return con;
+    }
+    
 }
