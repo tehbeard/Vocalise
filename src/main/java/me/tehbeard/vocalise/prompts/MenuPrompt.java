@@ -48,15 +48,9 @@ public class MenuPrompt extends ValidatingPrompt implements ConfigurablePrompt{
 
 	public String getPromptText(ConversationContext context) {
 		String msg = "";
-		int i =0;
+
 		for(String opt : prompts.keySet()){
-			if(msg.length() !=0){msg += ",";}
-			msg += opt;
-			i++;
-			if(i==5){context.getForWhom().sendRawMessage(msg);msg="";i=0;}
-		}
-		if(msg.length() > 0){
-		    context.getForWhom().sendRawMessage(msg);
+			context.getForWhom().sendRawMessage(opt);
 		}
 		return text;
 	}
