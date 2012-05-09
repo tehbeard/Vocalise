@@ -24,6 +24,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -188,7 +189,12 @@ public class PromptBuilder {
     }
     
     public Conversation makeConversation(Conversable whom){
-        Conversation con = new VocalisedConversation(plugin, whom, startPrompt);
+     return makeConversation(whom,new HashMap<Object,Object>());   
+    }
+    
+    public Conversation makeConversation(Conversable whom, Map<Object, Object> sessionData){
+        Conversation con = new VocalisedConversation(plugin, whom, startPrompt,sessionData);
+        
         con.begin();
         return con;
     }

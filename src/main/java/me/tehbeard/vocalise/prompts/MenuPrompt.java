@@ -1,7 +1,7 @@
 package me.tehbeard.vocalise.prompts;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.tehbeard.vocalise.parser.ConfigurablePrompt;
 import me.tehbeard.vocalise.parser.PromptBuilder;
@@ -10,6 +10,7 @@ import me.tehbeard.vocalise.parser.VocaliseParserException;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.ValidatingPrompt;
 
@@ -21,49 +22,42 @@ import org.bukkit.conversations.ValidatingPrompt;
  *
  */
 @PromptTag(tag="menu")
-public class MenuPrompt extends ValidatingPrompt implements ConfigurablePrompt{
+public class MenuPrompt extends NumericPrompt implements ConfigurablePrompt{
 
-	protected String text;
-	Map<String,Prompt> prompts;
+    protected String text;
+    List<PromptOpt> prompts;
 
-	/**
-	 * Provide flavour text for the menu
-	 * @param text
-	 */
-	public MenuPrompt(){
-		this("Select an option");
-	}
-	public MenuPrompt(String text) {
-		this.text = text;
-		prompts = new HashMap<String, Prompt>();
-	}
-	/**
-	 * Add a menu option
-	 * @param name name of option
-	 * @param prompt prompt
-	 */
-	public void addMenuOption(String name,Prompt prompt){
-		prompts.put(name, prompt);
-	}
+    /**
+     * Provide flavour text for the menu
+     * @param text
+     */
+    public MenuPrompt(){
+        this("Select an option");
+    }
+    public MenuPrompt(String text) {
+        this.text = text;
+        prompts = new ArrayList<PromptOpt>();
+    }
+    /**
+     * Add a menu option
+     * @param name name of option
+     * @param prompt prompt
+     */
+    public void addMenuOption(String name,Prompt prompt){
+        prompts.add(new PromptOpt(name, prompt));
+    }
 
-	public String getPromptText(ConversationContext context) {
-		String msg = "";
+    public String getPromptText(ConversationContext context) {
 
-		for(String opt : prompts.keySet()){
-			context.getForWhom().sendRawMessage(opt);
-		}
-		return text;
-	}
+        int i = 0;
+        for(PromptOpt opt : prompts){
+            context.getForWhom().sendRawMessage(i + ") " + opt.name);
+            i++;
+        }
+        return text;
+    }
 
-	@Override
-	protected boolean isInputValid(ConversationContext context, String input) {
-		return prompts.containsKey(input);
-	}
-	@Override
-	protected Prompt acceptValidatedInput(ConversationContext context,
-			String input) {
-		return prompts.get(input);
-	}
+
     public void configure(ConfigurationSection config, PromptBuilder builder) {
         builder.makePromptRef(config.getString("id"),this);
         if(!config.contains("options")){
@@ -80,9 +74,24 @@ public class MenuPrompt extends ValidatingPrompt implements ConfigurablePrompt{
 
                     );
         }
-        
+
+    }
+
+
+    private class PromptOpt{
+        String name;
+        Prompt prompt;
+        public PromptOpt(String name, Prompt prompt){
+            this.name = name;
+            this.prompt = prompt;
+        }
     }
 
 
 
+
+    @Override
+    protected Prompt acceptValidatedInput(ConversationContext context, Number number) {
+        return (number.intValue() >=0 && number.intValue() < prompts.size()) ? prompts.get(number.intValue()).prompt : this;
+    }
 }
