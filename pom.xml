@@ -2,7 +2,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.tehbeard</groupId>
   <artifactId>Vocalise</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <name>Vocalise API</name>
   <description>Secret sauce for the Bukkit Conversation API</description>
   <dependencies>
@@ -12,4 +11,5 @@
   		<version>1.2.5-R1.2</version>
   	</dependency>
   </dependencies>
+  <version>1.0</version>
 </project>
