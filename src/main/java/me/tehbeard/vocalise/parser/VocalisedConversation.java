@@ -21,8 +21,9 @@ public class VocalisedConversation extends Conversation{
         if (currentPrompt == null) {
             abandon(new ConversationAbandonedEvent(this));
         } else {
-            if(currentPrompt.getPromptText(context) != null){
-                context.getForWhom().sendRawMessage(prefix.getPrefix(context) + currentPrompt.getPromptText(context));
+            String promptText = currentPrompt.getPromptText(context);
+            if(promptText != null){
+                context.getForWhom().sendRawMessage(prefix.getPrefix(context) + promptText);
             }
             if (!currentPrompt.blocksForInput(context)) {
                 currentPrompt = currentPrompt.acceptInput(context, null);
