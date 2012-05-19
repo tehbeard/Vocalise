@@ -63,7 +63,6 @@ public class MenuPrompt extends NumericPrompt implements ConfigurablePrompt{
             throw new VocaliseParserException("Menu prompts need an options key for menu items");
         }
         for(String s : config.getConfigurationSection("options").getKeys(false)){
-            System.out.println("Parsing option " + s);
             addMenuOption(
                     config.getConfigurationSection("options." + s).getString("name"),
 
