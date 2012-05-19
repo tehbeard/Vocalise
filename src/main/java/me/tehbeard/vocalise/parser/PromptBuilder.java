@@ -35,56 +35,59 @@ public class PromptBuilder {
 
     private Map<String,Prompt> promptDatabase = new HashMap<String, Prompt>();
     private Prompt startPrompt;
-    
+
     private final ConfigurableFactory<ConfigurablePrompt, PromptTag> promptFactory;
     private final Plugin plugin;
+
+    private int indent = 0;
+    private boolean debug = false;
 
     public PromptBuilder(Plugin plugin){
         this.plugin = plugin;
         promptFactory = new ConfigurableFactory<ConfigurablePrompt, PromptTag>(PromptTag.class) {
-            
+
             @Override
             public String getTag(PromptTag annotation) {
                 return annotation.tag();
             }
         };
-        
+
         //simple prompts
         promptFactory.addProduct(MsgPrompt.class);
         promptFactory.addProduct(QuickBooleanPrompt.class);
         promptFactory.addProduct(MenuPrompt.class);
-        
+
         //input prompts
         promptFactory.addProduct(InputStringPrompt.class);
         promptFactory.addProduct(InputNumberPrompt.class);
         promptFactory.addProduct(InputBooleanPrompt.class);
         promptFactory.addProduct(InputPlayerNamePrompt.class);
         promptFactory.addProduct(InputRegexPrompt.class);
-        
+
     }
-    
+
     public PromptBuilder (Plugin plugin,File file,Map<String,Prompt> prompts){
         this(plugin);
         promptDatabase.putAll(prompts);
         load(file);
     }
-    
+
     public PromptBuilder (Plugin plugin,InputStream is,Map<String,Prompt> prompts){
         this(plugin);
         promptDatabase.putAll(prompts);
         load(is);
     }
-    
+
     public PromptBuilder (Plugin plugin,File file){
         this(plugin);
         load(file);
     }
-    
+
     public PromptBuilder (Plugin plugin,InputStream is){
         this(plugin);
         load(is);
     }
-    
+
     public void load(File file){
         YamlConfiguration c = new YamlConfiguration();
         try {
@@ -121,7 +124,7 @@ public class PromptBuilder {
         startPrompt = generatePrompt(c);
     }
 
-    
+
     public Prompt generatePrompt(ConfigurationSection config){
         promptDatabase.put("NULL", null);
         Prompt prompt = null;
@@ -129,16 +132,20 @@ public class PromptBuilder {
         String id = config.getString("id","");
         String type = config.getString("type");
         String message = config.getString("text");
-        System.out.println(" prompt of type " + type + ", id [" + id + "] with msg " + message);
+
+        if(isDebug()){
+            System.out.println(indent() + "Type [" + type + "], id [" + id + "] msg [" + message + "]");
+        }
+        indent++;
         //check for pointers
 
-        
+
         ConfigurablePrompt p = promptFactory.getProduct(type);
         if(p!=null){
-            System.out.println("Prompt is being configured");
             p.configure(config,this);
             prompt = p;
         }
+        indent --;
         return prompt;
 
 
@@ -154,7 +161,7 @@ public class PromptBuilder {
         }
 
     }
-    
+
     public void makePromptRef(String id,Prompt prompt){
         if(id != null && !id.equalsIgnoreCase("") && prompt != null){
             if(!promptDatabase.containsKey(id)){
@@ -172,7 +179,7 @@ public class PromptBuilder {
         }
     }
 
-    
+
 
     /**
      * Add some custom prompts to this prompt Builder
@@ -181,16 +188,37 @@ public class PromptBuilder {
      */
     public PromptBuilder AddPrompts(Class<? extends ConfigurablePrompt> ...prompts){
         for(Class<? extends ConfigurablePrompt> p : prompts){
-        promptFactory.addProduct(p);
-            
+            promptFactory.addProduct(p);
+
         }
         return this;
     }
-    
+
     public Conversation makeConversation(Conversable whom){
         Conversation con = new VocalisedConversation(plugin, whom, startPrompt);
         con.begin();
         return con;
     }
-    
+
+    public Prompt getPrompt(){
+        return startPrompt;
+    }
+
+    private String indent(){
+        String s ="";
+        int i = 0;
+        while(i < indent){
+            s += "  ";
+            i++;
+        }
+        return s;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 }
