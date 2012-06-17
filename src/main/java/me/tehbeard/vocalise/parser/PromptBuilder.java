@@ -24,7 +24,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
