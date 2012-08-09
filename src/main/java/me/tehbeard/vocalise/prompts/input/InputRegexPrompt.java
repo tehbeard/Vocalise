@@ -9,7 +9,6 @@ import me.tehbeard.vocalise.parser.PromptTag;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.RegexPrompt;
 import org.bukkit.conversations.ValidatingPrompt;
 
 @PromptTag(tag="inpregex")
