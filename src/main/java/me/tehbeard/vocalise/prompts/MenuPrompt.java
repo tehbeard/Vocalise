@@ -1,6 +1,8 @@
 package me.tehbeard.vocalise.prompts;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import me.tehbeard.vocalise.parser.ConfigurablePrompt;
@@ -10,6 +12,7 @@ import me.tehbeard.vocalise.parser.VocaliseParserException;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.ValidatingPrompt;
 
@@ -21,55 +24,54 @@ import org.bukkit.conversations.ValidatingPrompt;
  *
  */
 @PromptTag(tag="menu")
-public class MenuPrompt extends ValidatingPrompt implements ConfigurablePrompt{
+public class MenuPrompt extends NumericPrompt implements ConfigurablePrompt{
 
-	protected String text;
-	Map<String,Prompt> prompts;
+    protected String text;
+    List<MenuEntry> prompts;
+    //Map<String,Prompt> prompts;
 
-	/**
-	 * Provide flavour text for the menu
-	 * @param text
-	 */
-	public MenuPrompt(){
-		this("Select an option");
-	}
-	public MenuPrompt(String text) {
-		this.text = text;
-		prompts = new HashMap<String, Prompt>();
-	}
-	/**
-	 * Add a menu option
-	 * @param name name of option
-	 * @param prompt prompt
-	 */
-	public void addMenuOption(String name,Prompt prompt){
-		prompts.put(name, prompt);
-	}
+    /**
+     * Provide flavour text for the menu
+     * @param text
+     */
+    public MenuPrompt(){
+        this("Select an option");
+    }
+    public MenuPrompt(String text) {
+        this.text = text;
+        prompts = new ArrayList<MenuEntry>();
+    }
+    /**
+     * Add a menu option
+     * @param name name of option
+     * @param prompt prompt
+     */
+    public void addMenuOption(String name,Prompt prompt){
+        prompts.add(new MenuEntry(name,prompt));
+    }
 
-	public String getPromptText(ConversationContext context) {
-		String msg = "";
-		int i =0;
-		for(String opt : prompts.keySet()){
-			if(msg.length() !=0){msg += ",";}
-			msg += opt;
-			i++;
-			if(i==5){context.getForWhom().sendRawMessage(msg);msg="";i=0;}
-		}
-		if(msg.length() > 0){
-		    context.getForWhom().sendRawMessage(msg);
-		}
-		return text;
-	}
+    public String getPromptText(ConversationContext context) {
 
-	@Override
-	protected boolean isInputValid(ConversationContext context, String input) {
-		return prompts.containsKey(input);
-	}
-	@Override
-	protected Prompt acceptValidatedInput(ConversationContext context,
-			String input) {
-		return prompts.get(input);
-	}
+        int i = 0;
+        for(MenuEntry opt : prompts){
+            context.getForWhom().sendRawMessage("[" + i++ +"] " + opt.text);
+        }
+
+        return text;
+    }
+
+    @Override
+    protected boolean isNumberValid(ConversationContext context, Number input) {
+        int i = input.intValue();
+        return (i>=0) && (i<prompts.size());
+    }
+    
+    @Override
+    protected Prompt acceptValidatedInput(ConversationContext arg0, Number number) {
+        return prompts.get(number.intValue()).prompt;
+    }
+
+
     public void configure(ConfigurationSection config, PromptBuilder builder) {
         builder.makePromptRef(config.getString("id"),this);
         if(!config.contains("options")){
@@ -86,7 +88,23 @@ public class MenuPrompt extends ValidatingPrompt implements ConfigurablePrompt{
 
                     );
         }
-        
+
+    }
+
+
+    private class MenuEntry{
+        public String text;
+        public Prompt prompt;
+        /**
+         * @param text
+         * @param prompt
+         */
+        public MenuEntry(String text, Prompt prompt) {
+            this.text = text;
+            this.prompt = prompt;
+        }
+
+
     }
 
 
