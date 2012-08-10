@@ -42,14 +42,12 @@ public class DynamicMenuPrompt extends ValidatingPrompt{
 	
 	public final String getPromptText(ConversationContext context) {
 		String msg = "";
-		int i =0;
+		
 		for(String opt : feeder.getMenuOptions(context)){
-			if(msg.length() !=0){msg += ",";}
-			msg += opt;
-			i++;
-			if(i==5){context.getForWhom().sendRawMessage(msg);msg="";i=0;}
+			
+			msg +=opt +"\n";
 		}
-		return text;
+		return msg + text;
 	}
 
 	@Override

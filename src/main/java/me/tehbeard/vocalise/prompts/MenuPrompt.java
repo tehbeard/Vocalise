@@ -52,12 +52,13 @@ public class MenuPrompt extends NumericPrompt implements ConfigurablePrompt{
 
     public String getPromptText(ConversationContext context) {
 
+        String msg = "";
         int i = 0;
         for(MenuEntry opt : prompts){
-            context.getForWhom().sendRawMessage("[" + i++ +"] " + opt.text);
+            msg +="[" + i++ +"] " + opt.text + "\n";
         }
 
-        return text;
+        return msg + text;
     }
 
     @Override
