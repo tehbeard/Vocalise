@@ -129,13 +129,13 @@ public class PromptBuilder {
         String id = config.getString("id","");
         String type = config.getString("type");
         String message = config.getString("text");
-        System.out.println(" prompt of type " + type + ", id [" + id + "] with msg " + message);
+        //System.out.println(" prompt of type " + type + ", id [" + id + "] with msg " + message);
         //check for pointers
 
         
         ConfigurablePrompt p = promptFactory.getProduct(type);
         if(p!=null){
-            System.out.println("Prompt is being configured");
+            //System.out.println("Prompt is being configured");
             p.configure(config,this);
             prompt = p;
         }
