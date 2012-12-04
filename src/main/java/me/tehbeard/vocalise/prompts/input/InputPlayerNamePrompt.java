@@ -13,6 +13,19 @@ import org.bukkit.conversations.ValidatingPrompt;
 import org.bukkit.entity.Player;
 
 @PromptTag(tag = "inpply")
+/**
+ * Player input prompt, stores the player object, not the name
+ * Configuration format:
+ * <code>
+ * id: unique id for this prompt
+ * type: inpply
+ * variable: where to store value in context
+ * next: prompt declaration or string containing prompt id
+ * </code>
+
+ * @author James
+ *
+ */
 public class InputPlayerNamePrompt extends ValidatingPrompt implements ConfigurablePrompt {
 
     private String input;

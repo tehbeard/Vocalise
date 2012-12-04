@@ -39,6 +39,10 @@ public class PromptBuilder {
     private final ConfigurableFactory<ConfigurablePrompt, PromptTag> promptFactory;
     private final Plugin plugin;
 
+    /**
+     * Build a PromptBuilder for this plugin, and initialise the standard configurable prompts
+     * @param plugin
+     */
     public PromptBuilder(Plugin plugin){
         this.plugin = plugin;
         promptFactory = new ConfigurableFactory<ConfigurablePrompt, PromptTag>(PromptTag.class) {
@@ -63,6 +67,12 @@ public class PromptBuilder {
         
     }
     
+    /**
+     * Build a PromptBuilder for this plugin, Loading this prompt graph from file and adding the provided external prompts in the format ID:Prompt
+     * @param plugin
+     * @param file
+     * @param prompts
+     */
     public PromptBuilder (Plugin plugin,File file,Map<String,Prompt> prompts){
         this(plugin);
         promptDatabase.putAll(prompts);

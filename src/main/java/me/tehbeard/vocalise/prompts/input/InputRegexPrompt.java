@@ -12,6 +12,19 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.ValidatingPrompt;
 
 @PromptTag(tag="inpregex")
+/**
+ * Input validated by regex prompt
+ * Configuration format:
+ * <code>
+ * id: unique id for this prompt
+ * regex: regex expression to validate against
+ * type: inpregex
+ * variable: where to store value in context
+ * next: prompt declaration or string containing prompt id
+ * </code>
+ * @author James
+ *
+ */
 public class InputRegexPrompt extends ValidatingPrompt implements ConfigurablePrompt {
 
     

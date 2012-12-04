@@ -10,6 +10,18 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 
 @PromptTag(tag="inpbool")
+/**
+ * Input boolean prompt
+ * Configuration format:
+ * <code>
+ * id: unique id for this prompt
+ * type: inpbool
+ * variable: where to store value in context
+ * next: prompt declaration or string containing prompt id
+ * </code>
+ * @author James
+ *
+ */
 public class InputBooleanPrompt extends BooleanPrompt implements ConfigurablePrompt{
 
     private String input;

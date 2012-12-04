@@ -10,6 +10,18 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
 @PromptTag(tag="inpstr")
+/**
+ * Input string prompt
+ * Configuration format:
+ * <code>
+ * id: unique id for this prompt
+ * type: inpstr
+ * variable: where to store value in context
+ * next: prompt declaration or string containing prompt id
+ * </code>
+ * @author James
+ *
+ */
 public class InputStringPrompt extends StringPrompt implements ConfigurablePrompt{
 
     private String msg;

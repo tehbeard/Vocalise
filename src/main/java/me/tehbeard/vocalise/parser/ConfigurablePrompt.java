@@ -3,6 +3,11 @@ package me.tehbeard.vocalise.parser;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.conversations.Prompt;
 
+/**
+ * Configurable prompts have a method through which they can be configured.
+ * @author James
+ *
+ */
 public interface ConfigurablePrompt extends Prompt{
 
     

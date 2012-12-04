@@ -10,6 +10,19 @@ import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 
 @PromptTag(tag="inpnum")
+/**
+ * input number prompt
+ * Configuration format:
+ * <code>
+ * id: unique id for this prompt
+ * type: inpnum
+ * variable: where to store value in context
+ * next: prompt declaration or string containing prompt id
+ * </code>
+
+ * @author James
+ *
+ */
 public class InputNumberPrompt extends NumericPrompt implements ConfigurablePrompt {
 
     private String input;
